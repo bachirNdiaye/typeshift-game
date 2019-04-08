@@ -1,0 +1,1 @@
+La ligne du centre va être une liste chainée qui sera parcouru à chaque délacement pour vérifier si ça forme un mot
