@@ -30,3 +30,4 @@ def loadWords():
 	print("words")
 	print(words)
 	print("HELLOOOOOOO")
+	print("SALUUT")
