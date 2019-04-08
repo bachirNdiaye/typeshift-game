@@ -29,3 +29,4 @@ def loadWords():
 	print(allWordsOfThisLevel)
 	print("words")
 	print(words)
+	print("HELLOOOOOOO")
