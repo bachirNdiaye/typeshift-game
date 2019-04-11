@@ -17,7 +17,7 @@ def loadWords():
 		allWordsOfThisLevel = dictionnary[level]
 
 		for i in range(expectedWords):
-			words.append(allWordsOfThisLevel[randint(0, len(allWordsOfThisLevel)-1)])
+			words.append(allWordsOfThisLevel.pop(randint(0, len(allWordsOfThisLevel)-1)))
 
 	print("level")
 	print(level)
@@ -29,5 +29,3 @@ def loadWords():
 	print(allWordsOfThisLevel)
 	print("words")
 	print(words)
-	print("HELLOOOOOOO")
-	print("SALUUT")
