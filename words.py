@@ -2,19 +2,17 @@
 Contient la fonction qui charge mots qui seront sur la grille
 """
 from globals import *
-import json
 
 def loadWords():
 	"""
-	Charge les mots depuis le fichier dictionnary.json
+	Charge les mots depuis le fichier dictionary.json
 	en fonction du niveau du jeu
 	(Niveau 3 = 3lettres, Niveau 4 = 4 lettres etc.)
 	"""
-	global level, words, allWordsOfThisLevel, expectedWords
+	global level, words, allWordsOfThisLevel, expectedWords, gridSize
 
-	with open('dictionnary.json') as dictionnaryFile:
-		dictionnary = json.load(dictionnaryFile)
-		allWordsOfThisLevel = dictionnary[level]
+	with open('dictionary.json') as dictionaryFile:
+		allWordsOfThisLevel = json.load(dictionaryFile)[level]
 
 		for i in range(expectedWords):
 			words.append(allWordsOfThisLevel.pop(randint(0, len(allWordsOfThisLevel)-1)))
@@ -29,3 +27,5 @@ def loadWords():
 	print(allWordsOfThisLevel)
 	print("words")
 	print(words)
+	print("gridContainerSize")
+	print(gridContainerSize)

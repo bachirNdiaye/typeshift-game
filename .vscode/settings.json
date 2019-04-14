@@ -1,0 +1,11 @@
+{
+	"xml.fileAssociations": [
+		{
+			"systemId": "/Users/bachir/Desktop/GLRS%203/ProjetPython/Projet/typeshift/schema/tns.xsd",
+			"pattern": "**/**/*.xml"
+		}
+	],
+	"files.exclude": {
+		"schema": true
+	}
+}
