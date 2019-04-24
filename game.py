@@ -1,7 +1,7 @@
 """
 Contient la fonction qui appele les fonctions qui permettent de jouer au jeu
 """
-from words import *
+from userInterface import *
 
 def game():
 	"""
