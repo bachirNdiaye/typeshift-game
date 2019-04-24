@@ -7,3 +7,12 @@ Gère ce qui touche à l'interface graphique:
 """
 
 from words import *
+
+def grid():
+	pass
+
+def checkWord():
+	pass
+
+def moveColumn():
+	pass
