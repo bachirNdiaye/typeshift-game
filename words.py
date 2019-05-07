@@ -29,3 +29,5 @@ def loadWords():
 	print(words)
 	print("gridContainerSize")
 	print(gridContainerSize)
+	print("windowSize")
+	print(windowSize)

@@ -9,3 +9,5 @@ def game():
 	permettant de jouer au jeu
 	"""
 	loadWords()
+	grid()
+	window.mainloop()

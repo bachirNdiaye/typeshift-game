@@ -1,6 +1,8 @@
 """
 Ce fichier contient les variables globales qui seront utilisés dans le jeu
 """
+
+from tkinter import *
 from random import randint
 import json
 
@@ -10,7 +12,9 @@ allWordsOfThisLevel = []
 words = []
 maxScore = level*expectedWords #Le nombre de points total à avoir
 additionalFoundWords = [] #Si le joueur trouve des mots en plus de ceux qui avaient étés prévus, ils seront ici
+window = Tk()
 
 with open("config.json") as configFile:
 	config = json.load(configFile)
 	gridContainerSize = config["gridContainerSize"]
+	windowSize = config["windowSize"]
