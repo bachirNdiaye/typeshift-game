@@ -1,4 +1,11 @@
 {
-	"windowSize": 1000,
-	"gridContainerSize": 600
+	"windowSize": 700,
+	"gridContainerSize": 600,
+	"letterBlockSize": 60,
+	"windowColor": "#121920",
+	"gridContainerColor": "#18212b",
+	"centerLineColor": "#32465b",
+	"letterBlockColor": "#805d46",
+	"foundLetterBlockColor": "#3f8583",
+	"onCenterLineLetterBlockColor": "#5dcdc5"
 }
