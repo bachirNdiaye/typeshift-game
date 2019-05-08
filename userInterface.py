@@ -96,7 +96,7 @@ def textWidget(x, y, text, canvas):
 		x + (letterBlockSize // 2),
 		y + (letterBlockSize // 2),
 		text = text,
-		font = ("Ubuntu Mono", letterBlockSize),
+		font = ("Ubuntu Mono", letterBlockSize - (letterBlockSize // 10)),
 		fill = "#fff"
 	)
 	return rect, text
