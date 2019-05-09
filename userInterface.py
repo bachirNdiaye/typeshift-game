@@ -13,7 +13,6 @@ def grid():
 	"""
 	Crée la grille, les boutons et place les lettres
 	"""
-	#global window
 
 	window.title("TypeShift")
 	window.configure(bg = windowColor)
@@ -32,14 +31,9 @@ def grid():
 		outline = ""
 	)
 
+	#Là ou on commence à dessiner la grille (C'est pour permettre de centrer la grille)
 	startX = (gridContainerSize // 2) - ((level * letterBlockSize) // 2)
 	startY = centerLinePosY - (letterBlockSize * (expectedWords // 2))
-
-	#canvas.create_text(10, centerLinePosY, text = "A", justify = "center", fill = "#fff", width = letterBlockSize, stipple="gray25")
-
-	#a = textWidget(centerLinePosX, centerLinePosY, "A", canvas)
-	#print(a[0])
-	#print(a[1])
 
 	for i in range(level):
 
@@ -56,7 +50,7 @@ def grid():
 			notAvailablePositions.append(wordToChoosePosition)
 
 			if (words[wordToChoosePosition][i] not in alreadyPositionedLetters) :
-				positionY = letterPositions.pop(math.floor(len(letterPositions)//2))#choice([k for k in range(expectedWords) if k not in notAvailablePositions])
+				positionY = letterPositions.pop(math.floor(len(letterPositions)//2))
 				
 				letter = words[wordToChoosePosition][i]
 
@@ -69,16 +63,13 @@ def grid():
 					"found": False,
 					"rectAndText": textWidget(
 										startX + (i * letterBlockSize),
-										startY + ((positionY * letterBlockSize)),# - (letterBlockSize // 2),
+										startY + ((positionY * letterBlockSize)),
 										letter.upper(),
-										canvas
+										canvas,
+										getBlockColor(positionY, False, startX, startY)
 									)
-					#"next": None
 				}
 		
-		#print(notAvailablePositions)
-		
-	#print(columns)
 	btnQuitGame = Button(window, text = "Quitter le jeu", command = quitGame)
 	btnQuitGame.pack(side = LEFT)
 
@@ -88,10 +79,10 @@ def checkWord():
 def moveColumn():
 	pass
 
-def textWidget(x, y, text, canvas):
+def textWidget(x, y, text, canvas, fill = letterBlockColor):
 	"""Permet de créer un carré avec un texte à l'interieur"""
 	
-	rect = canvas.create_rectangle(x, y, (x + letterBlockSize), (y + letterBlockSize), fill = letterBlockColor, outline = windowColor)
+	rect = canvas.create_rectangle(x, y, (x + letterBlockSize), (y + letterBlockSize), fill = fill, outline = windowColor)
 	text = canvas.create_text(
 		x + (letterBlockSize // 2),
 		y + (letterBlockSize // 2),
@@ -101,6 +92,11 @@ def textWidget(x, y, text, canvas):
 	)
 	return rect, text
 
+def getBlockColor(posY, found, startX, startY):
+	if found:
+		return onCenterLineFoundLetterBlockColor if (startY + (posY * letterBlockSize) == centerLinePosY and startY + (posY * letterBlockSize) + letterBlockSize == (centerLinePosY + letterBlockSize)) else foundLetterBlockColor
+	else:
+		return onCenterLineLetterBlockColor if (startY + (posY * letterBlockSize) == centerLinePosY and startY + (posY * letterBlockSize) + letterBlockSize == (centerLinePosY + letterBlockSize)) else letterBlockColor
 
 
 def quitGame():

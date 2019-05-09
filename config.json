@@ -7,5 +7,6 @@
 	"centerLineColor": "#32465b",
 	"letterBlockColor": "#805d46",
 	"foundLetterBlockColor": "#3f8583",
-	"onCenterLineLetterBlockColor": "#5dcdc5"
+	"onCenterLineFoundLetterBlockColor": "#5dcdc5",
+	"onCenterLineLetterBlockColor": "#c78960"
 }

@@ -16,18 +16,3 @@ def loadWords():
 
 		for i in range(expectedWords):
 			words.append(allWordsOfThisLevel.pop(randint(0, len(allWordsOfThisLevel)-1)))
-
-	print("level")
-	print(level)
-	print("expectedWords")
-	print(expectedWords)
-	print("maxScore")
-	print(maxScore)
-	print("allWordsOfThisLevel")
-	print(allWordsOfThisLevel)
-	print("words")
-	print(words)
-	print("gridContainerSize")
-	print(gridContainerSize)
-	print("windowSize")
-	print(windowSize)

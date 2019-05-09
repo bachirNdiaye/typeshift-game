@@ -18,15 +18,16 @@ window = Tk()
 with open("config.json") as configFile:
 	config = json.load(configFile)
 
-	gridContainerSize				= config["gridContainerSize"]
-	windowSize						= config["windowSize"]
-	letterBlockSize					= config["letterBlockSize"]
-	windowColor						= config["windowColor"]
-	gridContainerColor				= config["gridContainerColor"]
-	centerLineColor					= config["centerLineColor"]
-	letterBlockColor				= config["letterBlockColor"]
-	foundLetterBlockColor			= config["foundLetterBlockColor"]
-	onCenterLineLetterBlockColor	= config["onCenterLineLetterBlockColor"]
+	gridContainerSize					= config["gridContainerSize"]
+	windowSize							= config["windowSize"]
+	letterBlockSize						= config["letterBlockSize"]
+	windowColor							= config["windowColor"]
+	gridContainerColor					= config["gridContainerColor"]
+	centerLineColor						= config["centerLineColor"]
+	letterBlockColor					= config["letterBlockColor"]
+	foundLetterBlockColor				= config["foundLetterBlockColor"]
+	onCenterLineFoundLetterBlockColor	= config["onCenterLineFoundLetterBlockColor"]
+	onCenterLineLetterBlockColor		= config["onCenterLineLetterBlockColor"]
 
 centerLinePosX = 0
 centerLinePosY = (gridContainerSize // 2 - letterBlockSize // 2)
