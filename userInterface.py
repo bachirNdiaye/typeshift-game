@@ -13,6 +13,7 @@ def grid():
 	"""
 	Crée la grille, les boutons et place les lettres
 	"""
+	global maxScore
 
 	window.title("TypeShift")
 	window.configure(bg = windowColor)
@@ -50,7 +51,7 @@ def grid():
 			notAvailablePositions.append(wordToChoosePosition)
 
 			if (words[wordToChoosePosition][i] not in alreadyPositionedLetters) :
-				positionY = letterPositions.pop(math.floor(len(letterPositions)//2))
+				positionY = letterPositions.pop(len(letterPositions)//2)
 				
 				letter = words[wordToChoosePosition][i]
 
@@ -69,7 +70,13 @@ def grid():
 										getBlockColor(positionY, False, startX, startY)
 									)
 				}
-		
+
+				if positionY == expectedWords//2: #Si la lettre est dans la ligne du centre, on l'ajoute dans la liste chaînée centerLineList
+					addToCenterLineList(i, positionY, centerLineList["head"])
+
+		maxScore += len(alreadyPositionedLetters) #On charge le score maximum
+	
+	print(maxScore, words, centerLineList)
 	btnQuitGame = Button(window, text = "Quitter le jeu", command = quitGame)
 	btnQuitGame.pack(side = LEFT)
 
@@ -78,6 +85,22 @@ def checkWord():
 
 def moveColumn():
 	pass
+
+def addToCenterLineList(columnIndice, letterYPosition, actualNode):
+	""""""
+	if not centerLineList["head"]: #S'il ne contient rien
+		centerLineList["head"] = {
+			"letter": columns["column"+str(columnIndice)]["letter"+str(letterYPosition)],
+			"next": None
+		}
+	else:
+		if not actualNode["next"]: #S'il ne contient rien
+			actualNode["next"] = {
+				"node": columns["column"+str(columnIndice)]["letter"+str(letterYPosition)],
+				"next": None
+			}
+		else:
+			addToCenterLineList(columnIndice, letterYPosition, actualNode["next"])
 
 def textWidget(x, y, text, canvas, fill = letterBlockColor):
 	"""Permet de créer un carré avec un texte à l'interieur"""
@@ -94,9 +117,9 @@ def textWidget(x, y, text, canvas, fill = letterBlockColor):
 
 def getBlockColor(posY, found, startX, startY):
 	if found:
-		return onCenterLineFoundLetterBlockColor if (startY + (posY * letterBlockSize) == centerLinePosY and startY + (posY * letterBlockSize) + letterBlockSize == (centerLinePosY + letterBlockSize)) else foundLetterBlockColor
+		return onCenterLineFoundLetterBlockColor if posY == expectedWords//2 else foundLetterBlockColor
 	else:
-		return onCenterLineLetterBlockColor if (startY + (posY * letterBlockSize) == centerLinePosY and startY + (posY * letterBlockSize) + letterBlockSize == (centerLinePosY + letterBlockSize)) else letterBlockColor
+		return onCenterLineLetterBlockColor if posY == expectedWords//2 else letterBlockColor
 
 
 def quitGame():
