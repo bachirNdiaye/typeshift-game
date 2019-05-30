@@ -34,3 +34,7 @@ with open("config.json") as configFile:
 
 centerLinePosX = 0
 centerLinePosY = (gridContainerSize // 2 - letterBlockSize // 2)
+
+#Là ou on commence à dessiner la grille (C'est pour permettre de centrer la grille)
+startX = (gridContainerSize // 2) - ((level * letterBlockSize) // 2)
+startY = centerLinePosY - (letterBlockSize * (expectedWords // 2))
