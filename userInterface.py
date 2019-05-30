@@ -9,6 +9,23 @@ Gère ce qui touche à l'interface graphique:
 import math
 from words import *
 
+def whosClicked(x):
+	for i in range(level):
+		if x >= i*letterBlockSize and x <= (i+1)*letterBlockSize:
+			return i+1
+
+def rightClick(event):
+	print("Clique droit")
+	if ( (event.x >= startX and event.x <= startX+(level*letterBlockSize)) and (event.y >= startY and event.y <= startY+(expectedWords*letterBlockSize)) ):
+		#print("La colonne cliquée est: "+str(whosClicked(event.x - startX)))
+		moveColumn(whosClicked(event.x - startX))
+
+def leftClick(event):
+	print("Clique gauche")
+	if ( (event.x >= startX and event.x <= startX+(level*letterBlockSize)) and (event.y >= startY and event.y <= startY+(expectedWords*letterBlockSize)) ):
+		#print("La colonne cliquée est: "+str(whosClicked(event.x - startX)))
+		moveColumn(whosClicked(event.x - startX))
+
 def grid():
 	"""
 	Crée la grille, les boutons et place les lettres
@@ -21,6 +38,8 @@ def grid():
 	canvas = Canvas(window, width = gridContainerSize, height = gridContainerSize)
 	canvas.configure(bg = gridContainerColor)
 	canvas.pack()
+	canvas.bind("<Button-1>", leftClick)
+	canvas.bind("<Button-2>", rightClick)
 
 	#Le background de la ligne du centre
 	canvas.create_rectangle(
@@ -31,10 +50,6 @@ def grid():
 		fill = centerLineColor,
 		outline = ""
 	)
-
-	#Là ou on commence à dessiner la grille (C'est pour permettre de centrer la grille)
-	startX = (gridContainerSize // 2) - ((level * letterBlockSize) // 2)
-	startY = centerLinePosY - (letterBlockSize * (expectedWords // 2))
 
 	for i in range(level):
 
@@ -76,14 +91,33 @@ def grid():
 
 		maxScore += len(alreadyPositionedLetters) #On charge le score maximum
 	
+	#A enlever
 	print(maxScore, words, centerLineList)
+	print("Actual word is")
+	checkWord()
+	
 	btnQuitGame = Button(window, text = "Quitter le jeu", command = quitGame)
 	btnQuitGame.pack(side = LEFT)
 
-def checkWord():
-	pass
+def actualWord(node):
+	if node["next"]:
+		return node["letter"]["letter"]+actualWord(node["next"])
+	else:
+		return node["letter"]["letter"]
 
-def moveColumn():
+def checkWord():
+	word = actualWord(centerLineList["head"])
+	print(word)
+
+	if word in words:
+		print("Mot trouvé")
+	elif word in allWordsOfThisLevel:
+		additionalFoundWords.append(word)
+		print("Mot trouvé")
+	else:
+		print("Mot non trouvé")
+
+def moveColumn(cliquedColumn):
 	pass
 
 def addToCenterLineList(columnIndice, letterYPosition, actualNode):
@@ -96,7 +130,7 @@ def addToCenterLineList(columnIndice, letterYPosition, actualNode):
 	else:
 		if not actualNode["next"]: #S'il ne contient rien
 			actualNode["next"] = {
-				"node": columns["column"+str(columnIndice)]["letter"+str(letterYPosition)],
+				"letter": columns["column"+str(columnIndice)]["letter"+str(letterYPosition)],
 				"next": None
 			}
 		else:
