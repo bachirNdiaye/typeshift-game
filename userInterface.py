@@ -12,19 +12,19 @@ from words import *
 def whosClicked(x):
 	for i in range(level):
 		if x >= i*letterBlockSize and x <= (i+1)*letterBlockSize:
-			return i+1
+			return str(i)
 
 def rightClick(event):
-	print("Clique droit")
-	if ( (event.x >= startX and event.x <= startX+(level*letterBlockSize)) and (event.y >= startY and event.y <= startY+(expectedWords*letterBlockSize)) ):
-		#print("La colonne cliquée est: "+str(whosClicked(event.x - startX)))
-		moveColumn(whosClicked(event.x - startX))
+	global actualScore
+
+	if ( (event.x >= startX and event.x <= startX+(level*letterBlockSize)) ):
+		moveColumn(whosClicked(event.x - startX), "down")
 
 def leftClick(event):
-	print("Clique gauche")
-	if ( (event.x >= startX and event.x <= startX+(level*letterBlockSize)) and (event.y >= startY and event.y <= startY+(expectedWords*letterBlockSize)) ):
-		#print("La colonne cliquée est: "+str(whosClicked(event.x - startX)))
-		moveColumn(whosClicked(event.x - startX))
+	global actualScore
+
+	if ( (event.x >= startX and event.x <= startX+(level*letterBlockSize)) ):
+		moveColumn(whosClicked(event.x - startX), "up")
 
 def grid():
 	"""
@@ -35,7 +35,6 @@ def grid():
 	window.title("TypeShift")
 	window.configure(bg = windowColor)
 	
-	canvas = Canvas(window, width = gridContainerSize, height = gridContainerSize)
 	canvas.configure(bg = gridContainerColor)
 	canvas.pack()
 	canvas.bind("<Button-1>", leftClick)
@@ -91,13 +90,17 @@ def grid():
 
 		maxScore += len(alreadyPositionedLetters) #On charge le score maximum
 	
-	#A enlever
-	print(maxScore, words, centerLineList)
-	print("Actual word is")
-	checkWord()
+	print("Solveur")
+	print(solveur())
 	
+	#scoreWidget = canvas.create_text(windowSize - 50, 0, text="0/"+str(maxScore), fill="#fff")
+	scoreWidgetText.set("Score: "+ str(actualScore) +" / "+str(maxScore))
+	scoreWidget = Label(window, textvariable = scoreWidgetText)
 	btnQuitGame = Button(window, text = "Quitter le jeu", command = quitGame)
-	btnQuitGame.pack(side = LEFT)
+	btnQuitGame = Button(window, text = "Quitter le jeu", command = quitGame)
+	
+	btnQuitGame.pack(side = RIGHT)
+	scoreWidget.pack(side = LEFT)
 
 def actualWord(node):
 	if node["next"]:
@@ -105,20 +108,98 @@ def actualWord(node):
 	else:
 		return node["letter"]["letter"]
 
+def colorizeFoundLetters(node):
+	global actualScore
+
+	alreadyFound = node["letter"]["found"]
+	
+	if not alreadyFound:
+		rect = node["letter"]["rectAndText"][0]
+		node["letter"]["found"] = True
+		actualScore+=1
+		scoreWidgetText.set("Score: "+ str(actualScore) +" / "+str(maxScore))
+		canvas.itemconfigure(rect, fill=onCenterLineFoundLetterBlockColor)
+	
+	if node["next"] is not None:
+		colorizeFoundLetters(node["next"])
+
+def end():
+	canvas.destroy()
+	winMessage = Label(window, text = "Puzzle Trouvé !", fg="#fff", bg=windowColor, font=("Arial", 50))
+	winMessage.pack(side = TOP, padx = gridContainerSize // 2)
+
+	expectedWordsMessage = Label(window, text = "Mots Prévus: "+", ".join(words), fg="#fff", bg=windowColor, font=("Arial", 14))
+	foundWordsMessage = Label(window, text = "Mots trouvés: "+", ".join(foundWords), fg="yellow", bg=windowColor, font=("Arial", 14))
+	additionalFoundWordsMessage = Label(window, text = "Mots additionnels: "+", ".join(additionalFoundWords), fg="yellow", bg=windowColor, font=("Arial", 14))
+
+	expectedWordsMessage.pack(side = TOP)
+	foundWordsMessage.pack(side = TOP)
+	additionalFoundWordsMessage.pack(side = TOP)
+
 def checkWord():
+	global actualScore
+	
 	word = actualWord(centerLineList["head"])
-	print(word)
 
-	if word in words:
-		print("Mot trouvé")
-	elif word in allWordsOfThisLevel:
+	if (word in words) and (word not in foundWords):
+		foundWords.append(word)
+		colorizeFoundLetters(centerLineList["head"])
+	elif (word in allWordsOfThisLevel) and (word not in additionalFoundWords):
 		additionalFoundWords.append(word)
-		print("Mot trouvé")
-	else:
-		print("Mot non trouvé")
+		colorizeFoundLetters(centerLineList["head"])
 
-def moveColumn(cliquedColumn):
-	pass
+	if (actualScore == maxScore): end()
+
+#La colonne cliquée correspond au nombre d'iterations à faire avant d'arrêter la fonction récursive
+def updateCenterLineList(nodeToInsert, iterations, actualNode):
+	if iterations == 0:
+		actualNode["letter"] = nodeToInsert
+	else:
+		updateCenterLineList(nodeToInsert, iterations-1, actualNode["next"])
+
+def moveColumn(cliquedColumn, direction):
+	# On met la valeur à soustraire pour le déplacement dans le tableau afin de le recuperer via les clés (correspondant à direction passé en paramètre ) au lieu de faire un if..else et de répéter deux fois le même code
+	columnLength = len(columns["column"+cliquedColumn])
+
+	sortedColumnKeys = list(columns["column"+cliquedColumn].keys())
+	sortedColumnKeys.sort()
+
+	centerLinePos = expectedWords // 2
+	lastKey = sortedColumnKeys[len(sortedColumnKeys) - 1]
+	
+	if ((columns["column"+cliquedColumn][sortedColumnKeys[0]]["posY"] != centerLinePos) and (direction == "down")) or ((columns["column"+cliquedColumn][lastKey]["posY"] != centerLinePos) and (direction == "up")):
+		d = {"up": letterBlockSize, "down": -letterBlockSize}
+		newPosY = 0
+
+		#letterPositions = []
+		for key in columns["column"+cliquedColumn]:
+			#letterPositions.append(int(key[len(key)-1]))
+			rect = columns["column"+cliquedColumn][key]["rectAndText"][0]
+			rectCoords = canvas.coords(rect)
+
+			text = columns["column"+cliquedColumn][key]["rectAndText"][1]
+			textCoords = canvas.coords(text)
+
+			canvas.coords(rect, rectCoords[0], rectCoords[1] - d[direction], rectCoords[2], rectCoords[3] - d[direction])
+			canvas.coords(text, textCoords[0], textCoords[1] - d[direction])
+
+			newPosY = columns["column"+cliquedColumn][key]["posY"] - 1 if direction == "up" else columns["column"+cliquedColumn][key]["posY"] + 1
+
+			columns["column"+cliquedColumn][key]["posY"] = newPosY
+
+			if not columns["column"+cliquedColumn][key]["found"]:
+				canvas.itemconfigure(rect, fill=letterBlockColor)
+
+				if newPosY == centerLinePos:
+					canvas.itemconfigure(rect, fill=onCenterLineLetterBlockColor)
+					updateCenterLineList(columns["column"+cliquedColumn][key], int(cliquedColumn), centerLineList["head"])
+			else:
+				canvas.itemconfigure(rect, fill=foundLetterBlockColor)
+
+				if newPosY == centerLinePos:
+					canvas.itemconfigure(rect, fill=onCenterLineFoundLetterBlockColor)
+					updateCenterLineList(columns["column"+cliquedColumn][key], int(cliquedColumn), centerLineList["head"])
+	checkWord()
 
 def addToCenterLineList(columnIndice, letterYPosition, actualNode):
 	""""""
@@ -155,6 +236,195 @@ def getBlockColor(posY, found, startX, startY):
 	else:
 		return onCenterLineLetterBlockColor if posY == expectedWords//2 else letterBlockColor
 
+def solveur():
+	"""
+	On cree le cas fixe 5 mots de 4 lettres
+	Les memes variables precedé pas le S de solveur pour les differencier
+	"""
+
+	SWords = ['pers', 'dito', 'soja', 'rapt', 'alle']
+	SAllWordsOfThisLevel = ["jale", "teta", "fila", "paya", "itou", "beer", "mail", "peau", "fera", "aide", "neon", "fane", "pref", "jars","elfe"]
+
+	SColumns = {
+		'column0': {
+			'letter2': {
+				'letter': 's',
+				'posX': 0,
+				'posY': 2,
+				'found': False,
+				'rectAndText': (2, 3)
+			},
+			'letter3': {
+				'letter': 'd',
+				'posX': 0,
+				'posY': 3,
+				'found': False,
+				'rectAndText': (4, 5)
+			},
+			'letter1': {
+				'letter': 'a',
+				'posX': 0,
+				'posY': 1,
+				'found': False,
+				'rectAndText': (6, 7)
+			},
+			'letter4': {
+				'letter': 'r',
+				'posX': 0,
+				'posY': 4,
+				'found': False,
+				'rectAndText': (8, 9)
+			},
+			'letter0': {
+				'letter': 'p',
+				'posX': 0,
+				'posY': 0,
+				'found': False,
+				'rectAndText': (10, 11)
+			}
+		},
+		'column1': {
+			'letter2': {
+				'letter': 'a',
+				'posX': 1,
+				'posY': 2,
+				'found': False,
+				'rectAndText': (12, 13)
+			},
+			'letter3': {
+				'letter': 'l',
+				'posX': 1,
+				'posY': 3,
+				'found': False,
+				'rectAndText': (14, 15)
+			},
+			'letter1': {
+				'letter': 'i',
+				'posX': 1,
+				'posY': 1,
+				'found': False,
+				'rectAndText': (16, 17)
+			},
+			'letter4': {
+				'letter': 'o',
+				'posX': 1,
+				'posY': 4,
+				'found': False,
+				'rectAndText': (18, 19)
+			},
+			'letter0': {
+				'letter': 'e',
+				'posX': 1,
+				'posY': 0,
+				'found': False,
+				'rectAndText': (20, 21)
+			}
+		},
+		'column2': {
+			'letter2': {
+				'letter': 'r',
+				'posX': 2,
+				'posY': 2,
+				'found': False,
+				'rectAndText': (22, 23)
+			},
+			'letter3': {
+				'letter': 'p',
+				'posX': 2,
+				'posY': 3,
+				'found': False,
+				'rectAndText': (24, 25)
+			},
+			'letter1': {
+				'letter': 'j',
+				'posX': 2,
+				'posY': 1,
+				'found': False,
+				'rectAndText': (26, 27)
+			},
+			'letter4': {
+				'letter': 'l',
+				'posX': 2,
+				'posY': 4,
+				'found': False,
+				'rectAndText': (28, 29)
+			},
+			'letter0': {
+				'letter': 't',
+				'posX': 2,
+				'posY': 0,
+				'found': False,
+				'rectAndText': (30, 31)
+			}
+		},
+		'column3': {
+			'letter2': {
+				'letter': 't',
+				'posX': 3,
+				'posY': 2,
+				'found': False,
+				'rectAndText': (32, 33)
+			},
+			'letter3': {
+				'letter': 's',
+				'posX': 3,
+				'posY': 3,
+				'found': False,
+				'rectAndText': (34, 35)
+			},
+			'letter1': {
+				'letter': 'e',
+				'posX': 3,
+				'posY': 1,
+				'found': False,
+				'rectAndText': (36, 37)
+			},
+			'letter4': {
+				'letter': 'a',
+				'posX': 3,
+				'posY': 4,
+				'found': False,
+				'rectAndText': (38, 39)
+			},
+			'letter0': {
+				'letter': 'o',
+				'posX': 3,
+				'posY': 0,
+				'found': False,
+				'rectAndText': (40, 41)
+			}
+		}
+	}
+	SLevel = 4
+	SExpectedWords = 5
+	#start = ""
+	end = ""
+	wordToCheck = ""
+
+	allWordsOfThisLevelWithExpectedWords = SWords + SAllWordsOfThisLevel
+
+	foundWords = [] #Les mots trouvés par le solveur
+
+	for i in range(SLevel):
+		end+=str(len(SColumns["column"+str(i)]))
+
+	tabIterations = list(map(int, list(end)))
+
+	for i1 in range(0, tabIterations[0]):
+		for i2 in range(0, tabIterations[1]):
+			for i3 in range(0, tabIterations[2]):
+				for i4 in range(0, tabIterations[3]):
+					wordToCheck = SColumns["column0"]["letter"+str(i1)]["letter"] + SColumns["column1"]["letter"+str(i2)]["letter"] + SColumns["column2"]["letter"+str(i3)]["letter"] + SColumns["column3"]["letter"+str(i4)]["letter"]
+
+					if (wordToCheck in allWordsOfThisLevelWithExpectedWords):
+						foundWords.append(wordToCheck)
+						allWordsOfThisLevelWithExpectedWords.remove(wordToCheck)
+
+	print("End: "+ end)
+	print("tabIterations: ")
+	print(tabIterations)
+	print("Found Words (Solveur): ")
+	print(foundWords)
 
 def quitGame():
 	window.destroy()
