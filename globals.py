@@ -4,6 +4,7 @@ Ce fichier contient les variables globales qui seront utilisés dans le jeu
 
 from tkinter import *
 from random import randint, choice
+import time
 import json
 
 expectedWords = randint(3,5) #Le nombre prévu à trouver (correspond aussi au nombre de lignes), mais le joueur peut quand meme en trouver d'autres (Ils seront dans les mots additionels trouvés). Ici on choisi aléatoirement entre 3 et 5 lignes et mots prévus

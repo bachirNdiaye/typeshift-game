@@ -92,17 +92,16 @@ def grid():
 
 		maxScore += len(alreadyPositionedLetters) #On charge le score maximum
 	
-	print("Solveur")
-	print(solveur())
-	
 	#scoreWidget = canvas.create_text(windowSize - 50, 0, text="0/"+str(maxScore), fill="#fff")
 	scoreWidgetText.set("Score: "+ str(actualScore) +" / "+str(maxScore))
 	scoreWidget = Label(window, textvariable = scoreWidgetText)
 	btnQuitGame = Button(window, text = "Quitter le jeu", command = quitGame)
 	btnQuitGame = Button(window, text = "Quitter le jeu", command = quitGame)
+	btnAfficheResultatSolveur = Button(window, text = "Solveur", command = printSolver)
 	
 	btnQuitGame.pack(side = RIGHT)
 	scoreWidget.pack(side = LEFT)
+	btnAfficheResultatSolveur.pack(side = BOTTOM, padx=gridContainerSize//2)
 
 def getLevelAndLauchGame(event):
 	for i in range(len(levelsWidget)):
@@ -182,7 +181,8 @@ def checkWord():
 		additionalFoundWords.append(word)
 		colorizeFoundLetters(centerLineList["head"])
 
-	if (actualScore == maxScore): end()
+	if (actualScore == maxScore):
+		end()
 
 #La colonne cliquée correspond au nombre d'iterations à faire avant d'arrêter la fonction récursive
 def updateCenterLineList(nodeToInsert, iterations, actualNode):
@@ -270,196 +270,150 @@ def getBlockColor(posY, found, startX, startY):
 	else:
 		return onCenterLineLetterBlockColor if posY == expectedWords//2 else letterBlockColor
 
-def solveur():
+def solver():
 	"""
-	On cree le cas fixe 5 mots de 4 lettres
-	Les memes variables precedé pas le S de solveur pour les differencier
+	Nous avons mis le solveur pour tous les niveaux au lieu du cas fixe, le solveur resout la partie en cours. Le cas varie en fonction du choix du niveau
 	"""
-	"""
-	SWords = ['pers', 'dito', 'soja', 'rapt', 'alle']
-	SAllWordsOfThisLevel = ["jale", "teta", "fila", "paya", "itou", "beer", "mail", "peau", "fera", "aide", "neon", "fane", "pref", "jars","elfe"]
+	tmpsDeb = time.clock() #Pour mesurer le temps d'execution
 
-	SColumns = {
-		'column0': {
-			'letter2': {
-				'letter': 's',
-				'posX': 0,
-				'posY': 2,
-				'found': False,
-				'rectAndText': (2, 3)
-			},
-			'letter3': {
-				'letter': 'd',
-				'posX': 0,
-				'posY': 3,
-				'found': False,
-				'rectAndText': (4, 5)
-			},
-			'letter1': {
-				'letter': 'a',
-				'posX': 0,
-				'posY': 1,
-				'found': False,
-				'rectAndText': (6, 7)
-			},
-			'letter4': {
-				'letter': 'r',
-				'posX': 0,
-				'posY': 4,
-				'found': False,
-				'rectAndText': (8, 9)
-			},
-			'letter0': {
-				'letter': 'p',
-				'posX': 0,
-				'posY': 0,
-				'found': False,
-				'rectAndText': (10, 11)
-			}
-		},
-		'column1': {
-			'letter2': {
-				'letter': 'a',
-				'posX': 1,
-				'posY': 2,
-				'found': False,
-				'rectAndText': (12, 13)
-			},
-			'letter3': {
-				'letter': 'l',
-				'posX': 1,
-				'posY': 3,
-				'found': False,
-				'rectAndText': (14, 15)
-			},
-			'letter1': {
-				'letter': 'i',
-				'posX': 1,
-				'posY': 1,
-				'found': False,
-				'rectAndText': (16, 17)
-			},
-			'letter4': {
-				'letter': 'o',
-				'posX': 1,
-				'posY': 4,
-				'found': False,
-				'rectAndText': (18, 19)
-			},
-			'letter0': {
-				'letter': 'e',
-				'posX': 1,
-				'posY': 0,
-				'found': False,
-				'rectAndText': (20, 21)
-			}
-		},
-		'column2': {
-			'letter2': {
-				'letter': 'r',
-				'posX': 2,
-				'posY': 2,
-				'found': False,
-				'rectAndText': (22, 23)
-			},
-			'letter3': {
-				'letter': 'p',
-				'posX': 2,
-				'posY': 3,
-				'found': False,
-				'rectAndText': (24, 25)
-			},
-			'letter1': {
-				'letter': 'j',
-				'posX': 2,
-				'posY': 1,
-				'found': False,
-				'rectAndText': (26, 27)
-			},
-			'letter4': {
-				'letter': 'l',
-				'posX': 2,
-				'posY': 4,
-				'found': False,
-				'rectAndText': (28, 29)
-			},
-			'letter0': {
-				'letter': 't',
-				'posX': 2,
-				'posY': 0,
-				'found': False,
-				'rectAndText': (30, 31)
-			}
-		},
-		'column3': {
-			'letter2': {
-				'letter': 't',
-				'posX': 3,
-				'posY': 2,
-				'found': False,
-				'rectAndText': (32, 33)
-			},
-			'letter3': {
-				'letter': 's',
-				'posX': 3,
-				'posY': 3,
-				'found': False,
-				'rectAndText': (34, 35)
-			},
-			'letter1': {
-				'letter': 'e',
-				'posX': 3,
-				'posY': 1,
-				'found': False,
-				'rectAndText': (36, 37)
-			},
-			'letter4': {
-				'letter': 'a',
-				'posX': 3,
-				'posY': 4,
-				'found': False,
-				'rectAndText': (38, 39)
-			},
-			'letter0': {
-				'letter': 'o',
-				'posX': 3,
-				'posY': 0,
-				'found': False,
-				'rectAndText': (40, 41)
-			}
-		}
-	}
-	SLevel = 4
-	SExpectedWords = 5
-	#start = ""
-	end = ""
-	wordToCheck = ""
+	wordToCheck = "" #On y met une combinaison de lettre avant de verifier que c'est un mot
 
-	allWordsOfThisLevelWithExpectedWords = SWords + SAllWordsOfThisLevel
+	allWordsOfThisLevelWithExpectedWords = words + allWordsOfThisLevel
 
 	foundWords = [] #Les mots trouvés par le solveur
+	
+	tabIterations = list(list(map(int, list(k.replace("letter", "") for k in list(columns[column].keys())))) for column in columns)
 
-	for i in range(SLevel):
-		end+=str(len(SColumns["column"+str(i)]))
-
-	tabIterations = list(map(int, list(end)))
-
-	for i1 in range(0, tabIterations[0]):
-		for i2 in range(0, tabIterations[1]):
-			for i3 in range(0, tabIterations[2]):
-				for i4 in range(0, tabIterations[3]):
-					wordToCheck = SColumns["column0"]["letter"+str(i1)]["letter"] + SColumns["column1"]["letter"+str(i2)]["letter"] + SColumns["column2"]["letter"+str(i3)]["letter"] + SColumns["column3"]["letter"+str(i4)]["letter"]
+	for t in tabIterations:
+		t.sort()
+	
+	"""
+	On met les boucles dans les if..else pour etre sur de faire qu'un seul test + le nombre d'iteration necessaire
+	C'est mieux que de faire plusieus itérations et des tests (if..else) pour chaque itérations
+	...
+	On a préferé utiliser plusieurs if..else (correspondant aux niveaux possibles) au lieu d'une fonction récursive
+	pour optimiser le temps, car la fonction récursive consommerai plus
+	"""
+	if level.get() == 3: #Solveur niveau 3
+		for i1 in tabIterations[0]:
+			for i2 in tabIterations[1]:
+				for i3 in tabIterations[2]:
+					wordToCheck = columns["column0"]["letter"+str(i1)]["letter"] + columns["column1"]["letter"+str(i2)]["letter"] + columns["column2"]["letter"+str(i3)]["letter"]
 
 					if (wordToCheck in allWordsOfThisLevelWithExpectedWords):
 						foundWords.append(wordToCheck)
 						allWordsOfThisLevelWithExpectedWords.remove(wordToCheck)
+	
+	elif level.get() == 4: #Solveur niveau 4
+		for i1 in tabIterations[0]:
+			for i2 in tabIterations[1]:
+				for i3 in tabIterations[2]:
+					for i4 in tabIterations[3]:
+						wordToCheck = columns["column0"]["letter"+str(i1)]["letter"] + columns["column1"]["letter"+str(i2)]["letter"] + columns["column2"]["letter"+str(i3)]["letter"] + columns["column3"]["letter"+str(i4)]["letter"]
 
-	print("End: "+ end)
-	print("tabIterations: ")
-	print(tabIterations)
-	print("Found Words (Solveur): ")
-	print(foundWords)
-	"""
+						if (wordToCheck in allWordsOfThisLevelWithExpectedWords):
+							foundWords.append(wordToCheck)
+							allWordsOfThisLevelWithExpectedWords.remove(wordToCheck)
+
+	elif level.get() == 5: #Solveur niveau 5
+		for i1 in tabIterations[0]:
+			for i2 in tabIterations[1]:
+				for i3 in tabIterations[2]:
+					for i4 in tabIterations[3]:
+						for i5 in tabIterations[4]:
+							wordToCheck = columns["column0"]["letter"+str(i1)]["letter"] + columns["column1"]["letter"+str(i2)]["letter"] + columns["column2"]["letter"+str(i3)]["letter"] + columns["column3"]["letter"+str(i4)]["letter"] + columns["column4"]["letter"+str(i5)]["letter"]
+
+							if (wordToCheck in allWordsOfThisLevelWithExpectedWords):
+								foundWords.append(wordToCheck)
+								allWordsOfThisLevelWithExpectedWords.remove(wordToCheck)
+
+	elif level.get() == 6: #Solveur niveau 6
+		for i1 in tabIterations[0]:
+			for i2 in tabIterations[1]:
+				for i3 in tabIterations[2]:
+					for i4 in tabIterations[3]:
+						for i5 in tabIterations[4]:
+							for i6 in tabIterations[5]:
+								wordToCheck = columns["column0"]["letter"+str(i1)]["letter"] + columns["column1"]["letter"+str(i2)]["letter"] + columns["column2"]["letter"+str(i3)]["letter"] + columns["column3"]["letter"+str(i4)]["letter"] + columns["column4"]["letter"+str(i5)]["letter"] + columns["column5"]["letter"+str(i6)]["letter"]
+
+								if (wordToCheck in allWordsOfThisLevelWithExpectedWords):
+									foundWords.append(wordToCheck)
+									allWordsOfThisLevelWithExpectedWords.remove(wordToCheck)
+
+	elif level.get() == 7: #Solveur niveau 7
+		for i1 in tabIterations[0]:
+			for i2 in tabIterations[1]:
+				for i3 in tabIterations[2]:
+					for i4 in tabIterations[3]:
+						for i5 in tabIterations[4]:
+							for i6 in tabIterations[5]:
+								for i7 in tabIterations[6]:
+									wordToCheck = columns["column0"]["letter"+str(i1)]["letter"] + columns["column1"]["letter"+str(i2)]["letter"] + columns["column2"]["letter"+str(i3)]["letter"] + columns["column3"]["letter"+str(i4)]["letter"] + columns["column4"]["letter"+str(i5)]["letter"] + columns["column5"]["letter"+str(i6)]["letter"] + columns["column6"]["letter"+str(i7)]["letter"]
+
+									if (wordToCheck in allWordsOfThisLevelWithExpectedWords):
+										foundWords.append(wordToCheck)
+										allWordsOfThisLevelWithExpectedWords.remove(wordToCheck)
+
+	elif level.get() == 8: #Solveur niveau 8
+		for i1 in tabIterations[0]:
+			for i2 in tabIterations[1]:
+				for i3 in tabIterations[2]:
+					for i4 in tabIterations[3]:
+						for i5 in tabIterations[4]:
+							for i6 in tabIterations[5]:
+								for i7 in tabIterations[6]:
+									for i8 in tabIterations[7]:
+										wordToCheck = columns["column0"]["letter"+str(i1)]["letter"] + columns["column1"]["letter"+str(i2)]["letter"] + columns["column2"]["letter"+str(i3)]["letter"] + columns["column3"]["letter"+str(i4)]["letter"] + columns["column4"]["letter"+str(i5)]["letter"] + columns["column5"]["letter"+str(i6)]["letter"] + columns["column6"]["letter"+str(i7)]["letter"] + columns["column7"]["letter"+str(i8)]["letter"]
+
+										if (wordToCheck in allWordsOfThisLevelWithExpectedWords):
+											foundWords.append(wordToCheck)
+											allWordsOfThisLevelWithExpectedWords.remove(wordToCheck)
+
+	elif level.get() == 9: #Solveur niveau 9
+		for i1 in tabIterations[0]:
+			for i2 in tabIterations[1]:
+				for i3 in tabIterations[2]:
+					for i4 in tabIterations[3]:
+						for i5 in tabIterations[4]:
+							for i6 in tabIterations[5]:
+								for i7 in tabIterations[6]:
+									for i8 in tabIterations[7]:
+										for i9 in tabIterations[8]:
+											wordToCheck = columns["column0"]["letter"+str(i1)]["letter"] + columns["column1"]["letter"+str(i2)]["letter"] + columns["column2"]["letter"+str(i3)]["letter"] + columns["column3"]["letter"+str(i4)]["letter"] + columns["column4"]["letter"+str(i5)]["letter"] + columns["column5"]["letter"+str(i6)]["letter"] + columns["column6"]["letter"+str(i7)]["letter"] + columns["column7"]["letter"+str(i8)]["letter"] + columns["column8"]["letter"+str(i9)]["letter"]
+
+											if (wordToCheck in allWordsOfThisLevelWithExpectedWords):
+												foundWords.append(wordToCheck)
+												allWordsOfThisLevelWithExpectedWords.remove(wordToCheck)
+
+	elif level.get() == 10: #Solveur niveau 10
+		for i1 in tabIterations[0]:
+			for i2 in tabIterations[1]:
+				for i3 in tabIterations[2]:
+					for i4 in tabIterations[3]:
+						for i5 in tabIterations[4]:
+							for i6 in tabIterations[5]:
+								for i7 in tabIterations[6]:
+									for i8 in tabIterations[7]:
+										for i9 in tabIterations[8]:
+											for i10 in tabIterations[9]:
+												wordToCheck = columns["column0"]["letter"+str(i1)]["letter"] + columns["column1"]["letter"+str(i2)]["letter"] + columns["column2"]["letter"+str(i3)]["letter"] + columns["column3"]["letter"+str(i4)]["letter"] + columns["column4"]["letter"+str(i5)]["letter"] + columns["column5"]["letter"+str(i6)]["letter"] + columns["column6"]["letter"+str(i7)]["letter"] + columns["column7"]["letter"+str(i8)]["letter"] + columns["column8"]["letter"+str(i9)]["letter"] + columns["column9"]["letter"+str(i10)]["letter"]
+
+												if (wordToCheck in allWordsOfThisLevelWithExpectedWords):
+													foundWords.append(wordToCheck)
+													allWordsOfThisLevelWithExpectedWords.remove(wordToCheck)
+
+	#print("tabIterations: ")
+	#print(tabIterations)
+	#print("Found Words: ")
+	tmpsFin = time.clock()
+
+	return foundWords, tmpsFin - tmpsDeb
+
+def printSolver():
+	r = solver() #Le resultat du solveur
+	rText = Label(window, text = "Solveur: \""+", ".join(r[0])+ "\" | Temps d'exec: "+str(r[1]), bg = windowColor, font=("Arial", 14), fg="#fff")
+
+	rText.pack(side = BOTTOM)
 
 def quitGame():
 	window.destroy()

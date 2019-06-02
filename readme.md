@@ -33,6 +33,8 @@ contenant les mots prévus
 ##### 6. Le fichier main.py
 - Il lance le jeu en faisant appel à la fonction game du fichier game.py
 
+#POUR LA SUITE DE LA DOCUMENTATION, VOIR LE FICHIER DE DOCUMENTATION
+
 # Logiciel de gestion de version utilisé: GIT
 # Dépôt distant: BitBucket.org
 # Membres du groupe:

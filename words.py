@@ -9,9 +9,7 @@ def loadWords():
 	en fonction du niveau du jeu
 	(Niveau 3 = 3lettres, Niveau 4 = 4 lettres etc.)
 	"""
-	global level, words, allWordsOfThisLevel, expectedWords, gridSize
-
-	print(level.get())
+	global level, words, allWordsOfThisLevel, expectedWords
 
 	with open('dictionary.json') as dictionaryFile:
 		allWordsOfThisLevel = json.load(dictionaryFile)[level.get()]
