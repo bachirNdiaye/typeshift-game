@@ -8,6 +8,5 @@ def game():
 	Appele dans l'ordre toutes les fonctions
 	permettant de jouer au jeu
 	"""
-	loadWords()
-	grid()
+	chooseLevel()
 	window.mainloop()

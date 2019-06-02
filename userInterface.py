@@ -10,21 +10,21 @@ import math
 from words import *
 
 def whosClicked(x):
-	for i in range(level):
+	for i in range(level.get()):
 		if x >= i*letterBlockSize and x <= (i+1)*letterBlockSize:
 			return str(i)
 
 def rightClick(event):
 	global actualScore
 
-	if ( (event.x >= startX and event.x <= startX+(level*letterBlockSize)) ):
-		moveColumn(whosClicked(event.x - startX), "down")
+	if ( (event.x >= startX.get() and event.x <= startX.get()+(level.get()*letterBlockSize)) ):
+		moveColumn(whosClicked(event.x - startX.get()), "down")
 
 def leftClick(event):
 	global actualScore
 
-	if ( (event.x >= startX and event.x <= startX+(level*letterBlockSize)) ):
-		moveColumn(whosClicked(event.x - startX), "up")
+	if ( (event.x >= startX.get() and event.x <= startX.get()+(level.get()*letterBlockSize)) ):
+		moveColumn(whosClicked(event.x - startX.get()), "up")
 
 def grid():
 	"""
@@ -32,11 +32,6 @@ def grid():
 	"""
 	global maxScore
 
-	window.title("TypeShift")
-	window.configure(bg = windowColor)
-	
-	canvas.configure(bg = gridContainerColor)
-	canvas.pack()
 	canvas.bind("<Button-1>", leftClick)
 	#Button-2 and Button-3 for right and middle click, il also allows to use right click on mac and windows because 2 works on mac
 	#but not on windows and 3 works on windows but not on mac
@@ -53,7 +48,11 @@ def grid():
 		outline = ""
 	)
 
-	for i in range(level):
+	#Là ou on commence à dessiner la grille (C'est pour permettre de centrer la grille)
+	startX.set((gridContainerSize // 2) - ((level.get() * letterBlockSize) // 2))
+	startY.set(centerLinePosY - (letterBlockSize * (expectedWords // 2)))
+
+	for i in range(level.get()):
 
 		notAvailablePositions = []
 		alreadyPositionedLetters = []
@@ -80,11 +79,11 @@ def grid():
 					"posY": positionY,
 					"found": False,
 					"rectAndText": textWidget(
-										startX + (i * letterBlockSize),
-										startY + ((positionY * letterBlockSize)),
+										startX.get() + (i * letterBlockSize),
+										startY.get() + ((positionY * letterBlockSize)),
 										letter.upper(),
 										canvas,
-										getBlockColor(positionY, False, startX, startY)
+										getBlockColor(positionY, False, startX.get(), startY.get())
 									)
 				}
 
@@ -104,6 +103,38 @@ def grid():
 	
 	btnQuitGame.pack(side = RIGHT)
 	scoreWidget.pack(side = LEFT)
+
+def getLevelAndLauchGame(event):
+	for i in range(len(levelsWidget)):
+		actualWidgetCoords = canvas.coords(levelsWidget[i])
+
+		if event.x >= actualWidgetCoords[0] and event.x <= actualWidgetCoords[2]:
+			level.set(i+minLetters)
+			loadWords()
+			canvas.delete(ALL)
+			grid()
+			break
+
+def chooseLevel():
+	canvas.create_text(
+		gridContainerSize // 2,
+		gridContainerSize // 3,
+		text = "Choisissez un niveau",
+		font = ("Arial", 40),
+		fill = "#fff"
+	)
+
+	widgetRank = 0
+	levelChoiceStartX = (gridContainerSize - (letterBlockSize * (maxLetters+1 - minLetters))) // 2
+
+	y = gridContainerSize // 2 #Le y ne varie pas, pas besoin de le mettre dans la boucle et de recalculer à chaque fois
+	for i in range(minLetters, maxLetters+1):
+		x = levelChoiceStartX + (widgetRank*letterBlockSize)
+
+		levelsWidget.append(textWidget(x, y, i, canvas, fill=onCenterLineFoundLetterBlockColor)[0])
+		widgetRank += 1
+
+	canvas.bind("<Button-1>", getLevelAndLauchGame)
 
 def actualWord(node):
 	if node["next"]:
@@ -244,7 +275,7 @@ def solveur():
 	On cree le cas fixe 5 mots de 4 lettres
 	Les memes variables precedé pas le S de solveur pour les differencier
 	"""
-
+	"""
 	SWords = ['pers', 'dito', 'soja', 'rapt', 'alle']
 	SAllWordsOfThisLevel = ["jale", "teta", "fila", "paya", "itou", "beer", "mail", "peau", "fera", "aide", "neon", "fane", "pref", "jars","elfe"]
 
@@ -428,6 +459,7 @@ def solveur():
 	print(tabIterations)
 	print("Found Words (Solveur): ")
 	print(foundWords)
+	"""
 
 def quitGame():
 	window.destroy()

@@ -9,5 +9,6 @@
 	"foundLetterBlockColor": "#3f8583",
 	"onCenterLineFoundLetterBlockColor": "#5dcdc5",
 	"onCenterLineLetterBlockColor": "#c78960",
-	"maxLetters": 10
+	"maxLetters": 10,
+	"minLetters": 3
 }

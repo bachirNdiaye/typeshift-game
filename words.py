@@ -11,8 +11,10 @@ def loadWords():
 	"""
 	global level, words, allWordsOfThisLevel, expectedWords, gridSize
 
+	print(level.get())
+
 	with open('dictionary.json') as dictionaryFile:
-		allWordsOfThisLevel = json.load(dictionaryFile)[level]
+		allWordsOfThisLevel = json.load(dictionaryFile)[level.get()]
 
 		for i in range(expectedWords):
 			words.append(allWordsOfThisLevel.pop(randint(0, len(allWordsOfThisLevel)-1)))
