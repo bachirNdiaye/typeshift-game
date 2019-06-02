@@ -16,3 +16,4 @@ def loadWords():
 
 		for i in range(expectedWords):
 			words.append(allWordsOfThisLevel.pop(randint(0, len(allWordsOfThisLevel)-1)))
+	print(words)

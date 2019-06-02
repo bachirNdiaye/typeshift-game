@@ -38,7 +38,10 @@ def grid():
 	canvas.configure(bg = gridContainerColor)
 	canvas.pack()
 	canvas.bind("<Button-1>", leftClick)
+	#Button-2 and Button-3 for right and middle click, il also allows to use right click on mac and windows because 2 works on mac
+	#but not on windows and 3 works on windows but not on mac
 	canvas.bind("<Button-2>", rightClick)
+	canvas.bind("<Button-3>", rightClick)
 
 	#Le background de la ligne du centre
 	canvas.create_rectangle(
